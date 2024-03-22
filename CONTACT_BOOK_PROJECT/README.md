@@ -37,3 +37,7 @@ Welcome to Contact Book! This application allows you to manage and organize your
 Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue or create a pull request.
 
 
+
+Thank you
+
+

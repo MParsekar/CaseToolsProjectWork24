@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ChatEST</title>
+
+		<!-- bootstrap 5 -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+		/>
+
+		<!-- style -->
+		<link rel="stylesheet" href="/static/style.css" />
+		<link rel="stylesheet" href="/static/scrollbar.css" />
+
+		<!-- icon -->
+		<link rel="icon" href="/static/assets/logo/openai-logo.png" />
+	</head>
+
+	<body>
+		<div class="d-flex align-items-end position-relative">
+			<!-- loadingView -->
+			<div
+				class="position-fixed top-0 start-0 loading-view"
+				id="loading-view"
+			>
+				<div class="vw-100 vh-100 bg-black opacity-75">
+					<div class="position-absolute top-50 start-50 translate-middle">
+						<div class="spinner-border text-light" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end loadingView -->
+
+			<!-- to top page -->
+			<button
+				class="position-fixed up-icon"
+				id="up-btn"
+				onclick="scrollToTop()"
+			>
+				<i class="fas fa-arrow-up"></i>
+			</button>
+			<!-- end to top page -->
+
+			<div
+				class="d-flex flex-column justify-content-around align-content-around m-0 vw-100"
+			>
+				<h2 class="fw-bold text-white p-3">ChatEST</h2>
+
+				<!-- Body -->
+				<div class="container mw-100" id="chat-container"></div>
+				<!-- end body -->
+
+				<div class="pre-footer">&nbsp;</div>
+
+				<form method="POST" action="">
+					<!-- Modal -->
+					<div
+						class="modal fade"
+						id="input-new-api-modal"
+						tabindex="-1"
+						aria-labelledby="exampleModalLabel"
+						aria-hidden="true"
+					>
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header m-0">
+									<h5 class="modal-title" id="exampleModalLabel">
+										New Open API key
+									</h5>
+									<button
+										type="button"
+										class="btn-close m-0"
+										data-bs-dismiss="modal"
+										aria-label="Close"
+									></button>
+								</div>
+								<div class="modal-body">
+									<div
+										class="alert alert-danger d-flex align-items-center"
+										role="alert"
+									>
+										<i class="fas fa-exclamation-triangle me-3"></i>
+										<div>
+											<p>
+												Your API Key is <b>invalid</b>, please
+												<b>Enter new API key</b>
+											</p>
+											You can find your API key at:
+											<a
+												href="https://platform.openai.com/account/api-keys"
+												target="_blank"
+												>https://platform.openai.com/account/api-keys</a
+											>
+										</div>
+									</div>
+									{{form.newAPI}}
+								</div>
+								<div
+									class="modal-footer border-0 flex align-items-end mx-2"
+								>
+									<button
+										type="button"
+										class="btn btn-secondary"
+										data-bs-dismiss="modal"
+									>
+										Close
+									</button>
+									<button
+										type="submit"
+										class="btn btn-primary"
+										onclick="clearChat()"
+									>
+										Submit
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- end Modal -->
+				</form>
+				<!-- Error Modal -->
+				<div
+					class="modal fade"
+					id="error-modal"
+					tabindex="-1"
+					aria-labelledby="exampleModalLabel"
+					aria-hidden="true"
+				>
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header m-0">
+								<h3 class="modal-title" id="exampleModalLabel">
+									Error
+								</h3>
+								<button
+									type="button"
+									class="btn-close m-0"
+									data-bs-dismiss="modal"
+									aria-label="Close"
+								></button>
+							</div>
+							<div class="modal-body">
+								<div
+									class="alert alert-danger d-flex align-items-center mb-0"
+									role="alert"
+								>
+									<i class="fas fa-exclamation-triangle me-3"></i>
+									<div>
+										<p class="m-0">{{error}}</p>
+									</div>
+								</div>
+							</div>
+							<div
+								class="modal-footer border-0 flex align-items-end mx-2 pt-0"
+							>
+								<button
+									type="button"
+									class="btn btn-secondary"
+									data-bs-dismiss="modal"
+								>
+									Close
+								</button>
+								<button
+									type="submit"
+									class="btn btn-primary"
+									onclick="clearChat()"
+								>
+									Reload
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end  error  Modal -->
+
+				<!-- footer -->
+				<footer class="position-relative p-0 h-100">
+					<form method="POST" action="">
+						<div
+							class="position-fixed input-field bottom-0 start-0 text-center bg-dark w-100"
+						>
+							<div
+								class="flex-column justify-content-center align-items-center px-5 py-2"
+							>
+								<div
+									class="input-group rounded-3 row d-flex align-items-center"
+								>
+									<div class="col-11">{{form.prompt}}</div>
+									<button
+										class="send-btn ms-1 pe-2 me-1 col"
+										id="addon-wrapping send-btn"
+										type="submit"
+										onclick="addMessage('user')"
+									>
+										<i class="far fa-paper-plane"></i>
+									</button>
+								</div>
+
+								<div class="text-muted">
+									<a
+										href="https://github.com/HCMUS-Project/Chatbox"
+										class="text-muted"
+										>ChatEST source</a
+									>
+									Free Research Preview. ChatEST is not for commercial
+									use.
+								</div>
+							</div>
+
+							<!-- button area -->
+							<div class="pb-4">
+								<button class="btn btn-warning" onclick="clearChat()">
+									<i class="fas fa-trash-alt"></i>
+									<span class="ps-2">Clear chat</span>
+								</button>
+							</div>
+							<!-- end button area -->
+						</div>
+
+						<!-- modal -->
+					</form>
+				</footer>
+				<!-- end footer -->
+			</div>
+		</div>
+	</body>
+
+	<script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
+	<script
+		src="https://kit.fontawesome.com/c67e626608.js"
+		crossorigin="anonymous"
+	></script>
+	]
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+		crossorigin="anonymous"
+	></script>
+
+	<script>
+		window.onscroll = function (ev) {
+			let upBtn = document.getElementById("up-btn");
+			if (window.scrollY >= 300) {
+				console.log("hi");
+				upBtn.style.display = "block";
+			} else {
+				upBtn.style.display = "none";
+			}
+		};
+		window.onload = function () {
+			document.getElementById("prompt").value = "";
+			loadChat();
+
+			let reloadFlag = false;
+
+			try {
+				reloadFlag = localStorage.getItem("reloadFlag");
+			} catch (err) {
+				console.log(err);
+			}
+
+			console.log("reload flag:" + reloadFlag);
+			if (reloadFlag) {
+				window.localStorage.clear();
+				showLoadingView(false);
+			} else addMessage("bot");
+
+			if (`{{error}}`) {
+				console.log("show modal");
+				showErrorModal();
+			}
+
+			console.log("check {{checkAPI}} ");
+			console.log("type:", typeof "{{checkAPI}}");
+			//show imput modal
+			if ("{{checkAPI}}" === "False") {
+				console.log("show modal");
+				showInputAPIModal();
+			}
+
+			scrollToBottom();
+		};
+
+		function addMessage(object) {
+			object == "user" ? showLoadingView(true) : showLoadingView(false);
+
+			if (object == "bot" && "{{message}}".replace('"', "") == "") return;
+
+			const chatContainer = loadChat();
+
+			let logo =
+				object == "user"
+					? "/static/assets/logo/User_logo.jpg"
+					: "static/assets/logo/ChatGPT_logo.png";
+
+			let message =
+				object == "user"
+					? document.getElementById("prompt").value
+					: "{{message}}";
+
+			if (
+				(message.includes(".png") ||
+					message.includes(".jpg") ||
+					message.includes(".jpeg")) &&
+				message.includes("![")
+			) {
+				console.log("this is image");
+
+				message = `<md-block>{{message}}</md-block>`;
+			}
+
+			console.log("message:", message);
+			let bgColor = object == "user" ? " bg-dark " : " bg-light-dark ";
+
+			const msg =
+				`<div class="chat-gpt-prompt row px-5 py-4 ` +
+				bgColor +
+				` gap-3">
+							<img
+								class="col-1 p-0 img-thumbnail bg-transparent border-0 align-content-end"
+								src="` +
+				logo +
+				`"
+								alt="logo"
+							/>
+							<p class="content col-11" class="msg">` +
+				// `<br><br>#include <stdio.h><br><br>int main(void)<br>{<br>    printf("Hello, World!\n");<br>    return 0;<br>}` +
+				message +
+				`				</p>
+						</div>
+					`;
+
+			chatContainer.innerHTML += msg;
+
+			localStorage.setItem("Chat", chatContainer.innerHTML);
+
+			// scroll to bottom
+			scrollToBottom();
+		}
+
+		function showLoadingView(isShow) {
+			let loadingView = document.getElementById("loading-view");
+			loadingView.style.display = isShow ? "block" : "none";
+		}
+
+		function scrollToTop() {
+			window.scrollTo(0, 0);
+		}
+
+		function scrollToBottom() {
+			window.scrollTo(
+				0,
+				document.body.scrollHeight || document.documentElement.scrollHeight,
+			);
+		}
+
+		function loadChat() {
+			const chatContainer = document.getElementById("chat-container");
+			chatContainer.innerHTML = localStorage.getItem("Chat");
+			return chatContainer;
+		}
+
+		function clearChat() {
+			document.getElementById("prompt").value = "";
+			window.localStorage.clear();
+
+			localStorage.setItem("reloadFlag", true);
+			window.location.reload();
+		}
+
+		function showInputAPIModal() {
+			var myModal = new bootstrap.Modal(
+				document.getElementById("input-new-api-modal"),
+			);
+			var modalToggle = document.getElementById("input-new-api-modal"); // relatedTarget
+			myModal.show(modalToggle);
+		}
+
+		function showErrorModal() {
+			var myModal = new bootstrap.Modal(
+				document.getElementById("error-modal"),
+			);
+			var modalToggle = document.getElementById("error-modal"); // relatedTarget
+			myModal.show(modalToggle);
+		}
+	</script>
+</html>

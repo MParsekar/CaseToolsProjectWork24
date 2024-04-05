@@ -1,0 +1,123 @@
+* {
+	margin: auto;
+	padding: auto;
+}
+
+body {
+	background: #343541;
+	font-size: 15px;
+}
+
+h2 {
+	font-size: 40px;
+}
+
+.btn-primary {
+	background: #6c757d;
+	border: none;
+}
+
+.btn-primary:hover {
+	background: #53595f;
+	font-weight: bold;
+}
+
+.btn-secondary {
+	background: transparent;
+	border: none;
+}
+
+.btn-secondary:hover {
+	background: transparent;
+	border: none;
+	font-weight: bold;
+}
+
+.loading-view {
+	z-index: 100;
+}
+
+.bg-light-dark {
+	background: #444654 !important;
+}
+
+.bg-dark {
+	background: #343541 !important;
+}
+
+.modal-content {
+	background: #343541;
+	color: white;
+}
+
+.img-thumbnail {
+	height: 50px;
+	width: 50px;
+}
+.content {
+	color: white;
+}
+
+.chat-gpt-prompt,
+.user-prompt {
+	text-align: justify;
+}
+
+.input-group,
+.send-btn,
+#prompt,
+#prompt:focus,
+#newAPI,
+#newAPI:focus {
+	background-color: #40414f;
+	color: white;
+	border-width: 0px !important;
+	outline-width: 0px;
+}
+
+#prompt {
+	padding: 10px;
+	width: 100% !important;
+}
+
+#newAPI {
+	border-radius: 10px;
+	padding: 10px 15px;
+	width: 100% !important;
+}
+.input-group-text,
+.send-btn {
+	padding: 0px;
+	height: 100% !important;
+	/* width: 100% !important; */
+}
+
+.input-group-text,
+.send-btn:hover {
+	background-color: #343541 !important;
+}
+
+.up-icon,
+.down-icon {
+	height: 40px;
+	width: 40px;
+	right: 30px;
+	bottom: 200px;
+	border: 1px solid white;
+	border-radius: 50%;
+	color: white;
+	background-color: transparent;
+}
+
+.down-icon {
+	top: 100px;
+}
+
+.msg img,
+md-block img {
+	width: 400px !important;
+}
+
+.pre-footer {
+	height: 150px !important;
+}
